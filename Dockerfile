@@ -13,13 +13,13 @@ RUN useradd -m -s /bin/bash $USER_NAME && \
     usermod -aG video $USER_NAME && \
     echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers
 
-# Copy the requirements.txt file
-COPY requirements.txt /tmp/requirements.txt
-
 # Install the required packages
 RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-catkin-tools
+
+# Copy the requirements.txt file
+COPY requirements.txt /tmp/requirements.txt
 
 # Install Python packages
 RUN pip3 install -r /tmp/requirements.txt
@@ -30,7 +30,7 @@ USER $USER_NAME
 # Set the working directory
 WORKDIR /home/$USER_NAME
 
-# COPY the ros_ws directory
+# Copy the ros_ws directory
 COPY --chown=$USER_NAME:$USER_NAME ros_ws /home/$USER_NAME/ros_ws
 
 # Build the package
