@@ -3,14 +3,12 @@ IMAGE_NAME 		?= ros-image
 CONTAINER_NAME 	?= ros-container
 ROS_DISTRO 		?= noetic
 USER_NAME 		?= user
-DIR_NAME 		?= ros-container
 
 # Build the Docker image
 build:
 	docker build \
 		--build-arg ROS_DISTRO=$(ROS_DISTRO) \
         --build-arg USER_NAME=$(USER_NAME) \
-        --build-arg DIR_NAME=$(DIR_NAME) \
 		-t $(IMAGE_NAME) .
 
 # Run the Docker container
@@ -23,7 +21,7 @@ run:
 		-v /tmp/.X11-unix/:/tmp/.X11-unix \
 		-v ~/.rviz/:/home/$(USER_NAME)/.rviz \
 		-v ~/.Xauthority:/home/$(USER_NAME)/.Xauthority:ro \
-		-v $(PWD):/home/$(USER_NAME)/$(DIR_NAME) \
+		-v $(PWD)/ros_ws/src:/home/$(USER_NAME)/ros_ws/src \
 	    -it $(IMAGE_NAME)
 
 # Execute a command inside the running container
