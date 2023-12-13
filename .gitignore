@@ -1,0 +1,5 @@
+# Ignore everything in ros_ws
+/ros_ws/*
+
+# Except src directory
+!/ros_ws/src/
