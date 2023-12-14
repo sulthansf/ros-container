@@ -1,7 +1,7 @@
 # Define variables 
-IMAGE_NAME 		?= ros-image
-CONTAINER_NAME 	?= ros-container
 ROS_DISTRO 		?= noetic
+IMAGE_NAME 		?= ros-$(ROS_DISTRO)-image
+CONTAINER_NAME 	?= ros-$(ROS_DISTRO)-container
 USER_NAME 		?= user
 
 # Build the Docker image
