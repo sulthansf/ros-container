@@ -1,8 +1,5 @@
-# Set the base image
-ARG ROS_DISTRO=noetic
-
-# Use the official ROS_DISTRO desktop image
-FROM osrf/ros:$ROS_DISTRO-desktop
+# Use the official ROS noetic desktop image
+FROM osrf/ros:noetic-desktop
 
 # Arguments
 ARG USER_NAME=user

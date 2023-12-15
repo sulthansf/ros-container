@@ -1,0 +1,39 @@
+# Use the official ROS humble desktop image
+FROM osrf/ros:humble-desktop
+
+# Arguments
+ARG USER_NAME=user
+
+# Create a user with USER_NAME and give sudo privileges
+RUN useradd -m -s /bin/bash $USER_NAME && \
+    usermod -aG dialout $USER_NAME && \
+    usermod -aG video $USER_NAME && \
+    echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers
+
+# Install the required packages
+RUN apt-get update && apt-get install -y \
+    python3-pip
+
+# Copy the requirements.txt file
+COPY requirements.txt /tmp/requirements.txt
+
+# Install Python packages
+RUN pip3 install -r /tmp/requirements.txt
+
+# Set the user
+USER $USER_NAME
+
+# Set the working directory
+WORKDIR /home/$USER_NAME
+
+# Copy the ros_ws directory
+COPY --chown=$USER_NAME:$USER_NAME ros_ws /home/$USER_NAME/ros_ws
+
+# Build the package
+RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && \
+                  cd /home/$USER_NAME/ros_ws && \
+                  colcon build --symlink-install"
+
+# Add the ROS setup scripts to bashrc
+RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
+    echo "source /home/$USER_NAME/ros_ws/install/local_setup.bash" >> ~/.bashrc
