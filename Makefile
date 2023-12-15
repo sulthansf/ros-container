@@ -63,8 +63,8 @@ clean:
 	-docker rm $(CONTAINER_NAME)
 	-docker rmi $(IMAGE_NAME)
 
-# Rebuild the Docker image and recreate the container
-rebuild: clean build run
+# Rebuild the Docker image
+rebuild: clean build
 
 # Default target
 all: build run
