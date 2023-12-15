@@ -3,6 +3,7 @@ ROS_DISTRO 		?= noetic
 IMAGE_NAME 		?= ros-$(ROS_DISTRO)-image
 CONTAINER_NAME 	?= ros-$(ROS_DISTRO)-container
 USER_NAME 		?= user
+USER_PASSWORD 	?=
 
 # Set Dockerfile path using ROS distro
 ifeq ($(ROS_DISTRO), noetic)
@@ -21,6 +22,7 @@ build:
 	fi
 	docker build \
         --build-arg USER_NAME=$(USER_NAME) \
+		--build-arg USER_PASSWORD=$(USER_PASSWORD) \
 		-t $(IMAGE_NAME) \
 		-f $(DOCKERFILE_PATH) .
 
