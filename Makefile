@@ -51,20 +51,67 @@ attach:
 
 # Stop the running container
 stop:
-	docker stop $(CONTAINER_NAME)
+	-docker stop $(CONTAINER_NAME)
 
 # Start the stopped container
 start:
 	docker start $(CONTAINER_NAME)
 
-# Stop and remove the container and image
-clean:
-	-docker stop $(CONTAINER_NAME)
+# Remove the stopped container
+rm:
 	-docker rm $(CONTAINER_NAME)
+
+# Remove the image
+rmi:
 	-docker rmi $(IMAGE_NAME)
+
+# Stop and remove the container and image
+clean: stop rm rmi
+
+# Restart the Docker container
+restart: stop start
+
+# Rerun the Docker container
+rerun: stop rm run
 
 # Rebuild the Docker image
 rebuild: clean build
 
 # Default target
 all: build run
+
+# Help
+help:
+	@echo "Usage: make [target]"
+	@echo "Targets:"
+	@echo "  build		Build the Docker image"
+	@echo "  run		Run the Docker container"
+	@echo "  exec		Attach to a new bash session inside the running container"
+	@echo "  attach	Attach to the running container"
+	@echo "  stop		Stop the running container"
+	@echo "  start		Start the stopped container"
+	@echo "  rm		Remove the stopped container"
+	@echo "  rmi		Remove the image"
+	@echo "  clean		Stop and remove the container and image"
+	@echo "  restart	Restart the Docker container"
+	@echo "  rerun		Rerun the Docker container"
+	@echo "  rebuild	Rebuild the Docker image"
+	@echo "  all		Default target: build run"
+	@echo "  help		Display this help message"
+	@echo ""
+	@echo "Variables:"
+	@echo "  ROS_DISTRO		ROS distro (default: noetic)"
+	@echo "  IMAGE_NAME		Docker image name (default: ros-$(ROS_DISTRO)-image)"
+	@echo "  CONTAINER_NAME	Docker container name (default: ros-$(ROS_DISTRO)-container)"
+	@echo "  USER_NAME		Username inside the container (default: user)"
+	@echo "  USER_PASSWORD		Password for the user (default is empty)"
+	@echo ""
+	@echo "Examples:"
+	@echo "  make build"
+	@echo "  make run"
+	@echo "  make build run"
+	@echo "  make build run ROS_DISTRO=humble USER_NAME=robot USER_PASSWORD=robot"
+	@echo "  make rebuild run ROS_DISTRO=humble USER_NAME=robot USER_PASSWORD=robot"
+	@echo "  make clean ROS_DISTRO=humble"
+
+.PHONY: build run exec attach stop start rm rmi clean restart rerun rebuild all help
