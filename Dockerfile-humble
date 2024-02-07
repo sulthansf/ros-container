@@ -32,12 +32,14 @@ USER $USER_NAME
 # Set the working directory
 WORKDIR /home/$USER_NAME
 
-# Copy the ros_ws directory
-COPY --chown=$USER_NAME:$USER_NAME ros_ws /home/$USER_NAME/ros_ws
+# Copy the ros_ws/src directory
+COPY --chown=$USER_NAME:$USER_NAME ros_ws/src /home/$USER_NAME/ros_ws/src
 
 # Build the package
 RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && \
                   cd /home/$USER_NAME/ros_ws && \
+                  rosdep update && \
+                  rosdep install --from-paths src --ignore-src -r -y && \
                   colcon build --symlink-install"
 
 # Add the ROS setup scripts to bashrc
