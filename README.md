@@ -1,6 +1,6 @@
 # ROS Container
 This repository contains Dockerfiles and a Makefile to build a Docker container for developing ROS applications. The supported ROS versions are Noetic and Humble. The container features the following:
-- Mounts ros_ws directory to the container as a volume
+- Mounts ros_ws/src and data directories as volumes
 - Forwards X11 display to the host
 - Supports serial communication
 - Supports video input

@@ -39,6 +39,7 @@ run:
 		-v ~/.rviz/:/home/$(USER_NAME)/.rviz \
 		-v ~/.Xauthority:/home/$(USER_NAME)/.Xauthority:ro \
 		-v $(PWD)/ros_ws/src:/home/$(USER_NAME)/ros_ws/src \
+		-v $(PWD)/data:/home/$(USER_NAME)/data \
 	    -it $(IMAGE_NAME)
 
 # Execute a command inside the running container
