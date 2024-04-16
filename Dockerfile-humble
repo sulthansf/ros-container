@@ -4,16 +4,21 @@ FROM osrf/ros:humble-desktop
 # Arguments
 ARG USER_NAME=user
 ARG USER_PASSWORD
+ARG USER_UID=1000
+ARG USER_GID=1000
 
 # Create a user with USER_NAME and give sudo privileges
-RUN useradd -m -s /bin/bash $USER_NAME && \
+RUN groupadd -g $USER_GID $USER_NAME && \
+    useradd -m -s /bin/bash -u $USER_UID -g $USER_GID $USER_NAME && \
     usermod -aG dialout $USER_NAME && \
     usermod -aG video $USER_NAME && \
     if [ -n "$USER_PASSWORD" ]; then \
         echo "$USER_NAME:$USER_PASSWORD" | chpasswd && \
-        echo "$USER_NAME ALL=(ALL) ALL" > /etc/sudoers; \
+        echo "$USER_NAME ALL=(ALL) ALL" >> /etc/sudoers.d/$USER_NAME && \
+        chmod 0440 /etc/sudoers.d/$USER_NAME; \
     else \
-        echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers; \
+        echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USER_NAME && \
+        chmod 0440 /etc/sudoers.d/$USER_NAME; \
     fi
 
 # Install the required packages
