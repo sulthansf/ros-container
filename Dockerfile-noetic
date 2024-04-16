@@ -14,9 +14,11 @@ RUN groupadd -g $USER_GID $USER_NAME && \
     usermod -aG video $USER_NAME && \
     if [ -n "$USER_PASSWORD" ]; then \
         echo "$USER_NAME:$USER_PASSWORD" | chpasswd && \
-        echo "$USER_NAME ALL=(ALL) ALL" > /etc/sudoers; \
+        echo "$USER_NAME ALL=(ALL) ALL" >> /etc/sudoers.d/$USER_NAME && \
+        chmod 0440 /etc/sudoers.d/$USER_NAME; \
     else \
-        echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers; \
+        echo "$USER_NAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USER_NAME && \
+        chmod 0440 /etc/sudoers.d/$USER_NAME; \
     fi
 
 # Install the required packages
