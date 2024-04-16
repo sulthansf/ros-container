@@ -1,9 +1,10 @@
-# Define variables
+# Define arguments with default values
 ROS_DISTRO 		= noetic
-IMAGE_NAME 		= ros-$(ROS_DISTRO)-image
-CONTAINER_NAME 	= ros-$(ROS_DISTRO)-container
 USER_NAME 		= user
-USER_PASSWORD 	=
+
+# Define variables
+IMAGE_TAG 		= ros-$(ROS_DISTRO)-image
+CONTAINER_TAG 	= ros-$(ROS_DISTRO)-container
 USER_UID 		= $(shell id -u)
 USER_GID 		= $(shell id -g)
 
@@ -22,19 +23,21 @@ build:
 		echo "Unsupported/invalid ROS distro: $(ROS_DISTRO). Only noetic and humble are supported"; \
 		exit 1; \
 	fi
+	@echo -n "Enter $(USER_NAME) password (optional, press ENTER to continue): "; \
+	/bin/bash -c 'read -s USER_PASSWORD; echo; \
 	docker build \
         --build-arg USER_NAME=$(USER_NAME) \
-		--build-arg USER_PASSWORD=$(USER_PASSWORD) \
+		--build-arg USER_PASSWORD=$$USER_PASSWORD \
 		--build-arg USER_UID=$(USER_UID) \
 		--build-arg USER_GID=$(USER_GID) \
-		-t $(IMAGE_NAME) \
-		-f $(DOCKERFILE_PATH) .
+		-t $(IMAGE_TAG) \
+		-f $(DOCKERFILE_PATH) .'
 
 # Run the Docker container
 run:
 	docker run \
 		--net=host \
-		--name $(CONTAINER_NAME) \
+		--name $(CONTAINER_TAG) \
 		--restart unless-stopped \
 		-e DISPLAY=${DISPLAY} \
 		-v /tmp/.X11-unix/:/tmp/.X11-unix \
@@ -42,31 +45,31 @@ run:
 		-v ~/.Xauthority:/home/$(USER_NAME)/.Xauthority:ro \
 		-v $(PWD)/ros_ws/src:/home/$(USER_NAME)/ros_ws/src \
 		-v $(PWD)/data:/home/$(USER_NAME)/data \
-	    -it $(IMAGE_NAME)
+	    -it $(IMAGE_TAG)
 
 # Execute a command inside the running container
 exec:
-	docker exec -it $(CONTAINER_NAME) bash
+	docker exec -it $(CONTAINER_TAG) bash
 
 # Attach to the running container
 attach:
-	docker attach $(CONTAINER_NAME)
+	docker attach $(CONTAINER_TAG)
 
 # Stop the running container
 stop:
-	-docker stop $(CONTAINER_NAME)
+	-docker stop $(CONTAINER_TAG)
 
 # Start the stopped container
 start:
-	docker start $(CONTAINER_NAME)
+	docker start $(CONTAINER_TAG)
 
 # Remove the stopped container
 rm:
-	-docker rm $(CONTAINER_NAME)
+	-docker rm $(CONTAINER_TAG)
 
 # Remove the image
 rmi:
-	-docker rmi $(IMAGE_NAME)
+	-docker rmi $(IMAGE_TAG)
 
 # Stop and remove the container and image
 clean: stop rm rmi
@@ -104,8 +107,8 @@ help:
 	@echo ""
 	@echo "Variables:"
 	@echo "  ROS_DISTRO		ROS distro (default: noetic)"
-	@echo "  IMAGE_NAME		Docker image name (default: ros-$(ROS_DISTRO)-image)"
-	@echo "  CONTAINER_NAME	Docker container name (default: ros-$(ROS_DISTRO)-container)"
+	@echo "  IMAGE_TAG		Docker image name (default: ros-$(ROS_DISTRO)-image)"
+	@echo "  CONTAINER_TAG	Docker container name (default: ros-$(ROS_DISTRO)-container)"
 	@echo "  USER_NAME		Username inside the container (default: user)"
 	@echo "  USER_PASSWORD		Password for the user (default is empty)"
 	@echo ""

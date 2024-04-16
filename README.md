@@ -11,20 +11,29 @@ This repository contains Dockerfiles and a Makefile to build a Docker container 
 ### Build
 To build the container, run the following command:
 ```bash
-make build ROS_DISTRO=<ros_distro> USER_NAME=<user_name> USER_PASSWORD=<user_password>
+make build ROS_DISTRO=<ros_distro> USER_NAME=<user_name>
 ```
-`<ros_distro>` is either `noetic` or `humble`. Default is `noetic`.\
-`<user_name>` is the name of the user to be created in the container. Default is `user`.\
-`<user_password>` is the password of the user to be created in the container and is optional. There is no default password.
+- `<ros_distro>` is either `noetic` or `humble`. Default is `noetic`.
+- `<user_name>` is the name of the user to be created in the container. Default is `user`.
+
+#### Notes
+- The command will prompt for the password for the user to be created in the container. It is optional and can be left empty.
+- The user will be created with the same user id and group id as the host user. This is to avoid permission issues for X11 display and mounted volumes.
+- The above command will build the image with the tag `ros-<ros_distro>-image`.
 
 **After a Docker image with a specific ROS distro is built, the following commands can be used to manage the image and the container.**
-_Note: All the below commands take the `ROS_DISTRO` argument. It should correspond to the ROS distro of the image or the container to be managed. Default is `noetic`._
+_Note: The arguments used in the following commands should be the same as the ones used to build the corresponding image._
 
 ### Run
 To run the container, run the following command:
 ```bash
-make run ROS_DISTRO=<ros_distro>
+make run ROS_DISTRO=<ros_distro> USER_NAME=<user_name>
 ```
+
+#### Notes
+- The above command will create a container with the tag `ros-<ros_distro>-container`.
+- The container will be started and attached to the terminal. The container will not be stopped or removed when the terminal is closed.
+
 ### Attach
 To attach to the container, run the following command:
 ```bash
