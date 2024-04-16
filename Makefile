@@ -4,6 +4,8 @@ IMAGE_NAME 		?= ros-$(ROS_DISTRO)-image
 CONTAINER_NAME 	?= ros-$(ROS_DISTRO)-container
 USER_NAME 		?= user
 USER_PASSWORD 	?=
+USER_UID 		?= $(shell id -u)
+USER_GID 		?= $(shell id -g)
 
 # Set Dockerfile path using ROS distro
 ifeq ($(ROS_DISTRO), noetic)
@@ -23,6 +25,8 @@ build:
 	docker build \
         --build-arg USER_NAME=$(USER_NAME) \
 		--build-arg USER_PASSWORD=$(USER_PASSWORD) \
+		--build-arg USER_UID=$(USER_UID) \
+		--build-arg USER_GID=$(USER_GID) \
 		-t $(IMAGE_NAME) \
 		-f $(DOCKERFILE_PATH) .
 
@@ -31,8 +35,6 @@ run:
 	docker run \
 		--net=host \
 		--name $(CONTAINER_NAME) \
-		--hostname $(CONTAINER_NAME) \
-		--add-host $(CONTAINER_NAME):127.0.0.1 \
 		--restart unless-stopped \
 		-e DISPLAY=${DISPLAY} \
 		-v /tmp/.X11-unix/:/tmp/.X11-unix \
