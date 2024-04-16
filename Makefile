@@ -1,11 +1,11 @@
 # Define variables
-ROS_DISTRO 		?= noetic
-IMAGE_NAME 		?= ros-$(ROS_DISTRO)-image
-CONTAINER_NAME 	?= ros-$(ROS_DISTRO)-container
-USER_NAME 		?= user
-USER_PASSWORD 	?=
-USER_UID 		?= $(shell id -u)
-USER_GID 		?= $(shell id -g)
+ROS_DISTRO 		= noetic
+IMAGE_NAME 		= ros-$(ROS_DISTRO)-image
+CONTAINER_NAME 	= ros-$(ROS_DISTRO)-container
+USER_NAME 		= user
+USER_PASSWORD 	=
+USER_UID 		= $(shell id -u)
+USER_GID 		= $(shell id -g)
 
 # Set Dockerfile path using ROS distro
 ifeq ($(ROS_DISTRO), noetic)
