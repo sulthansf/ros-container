@@ -24,7 +24,8 @@ RUN groupadd -g $USER_GID $USER_NAME && \
 # Install the required packages
 RUN apt-get update && apt-get install -y \
     python3-pip \
-    python3-catkin-tools
+    python3-catkin-tools \
+    nano
 
 # Copy the requirements.txt file
 COPY requirements.txt /tmp/requirements.txt
@@ -48,6 +49,11 @@ RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && \
                   rosdep install --from-paths src --ignore-src -r -y && \
                   catkin build"
 
-# Add the ROS setup scripts to bashrc
-RUN echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
+# Set the environment variables
+RUN echo "\n# Set the environment variables" >> ~/.bashrc && \
+    echo "export PATH=/home/$USER_NAME/.local/bin:\$PATH" >> ~/.bashrc && \
+    echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
     echo "source /home/$USER_NAME/ros_ws/devel/setup.bash" >> ~/.bashrc
+
+# Set the entrypoint
+CMD ["/bin/bash"]
