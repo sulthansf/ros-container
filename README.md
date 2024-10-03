@@ -13,7 +13,7 @@ To build the container, run the following command:
 ```bash
 make build ROS_DISTRO=<ros_distro> USER_NAME=<user_name>
 ```
-- `<ros_distro>` is either `noetic` or `humble`. Default is `noetic`.
+- `<ros_distro>` is the ROS distro to be used in the container. Supported distros are `melodic`, `noetic`, `foxy`, and `humble`. Default is `noetic`.
 - `<user_name>` is the name of the user to be created in the container. Default is `user`.
 
 #### Notes
