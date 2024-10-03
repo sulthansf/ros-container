@@ -1,18 +1,23 @@
 # Define arguments with default values
-ROS_DISTRO 		= noetic
-USER_NAME 		= user
+ROS_DISTRO 		:= noetic
+USER_NAME 		:= user
 
 # Define variables
-IMAGE_TAG 		= ros-$(ROS_DISTRO)-image
-CONTAINER_TAG 	= ros-$(ROS_DISTRO)-container
-USER_UID 		= $(shell id -u)
-USER_GID 		= $(shell id -g)
+IMAGE_TAG 		:= ros-$(ROS_DISTRO)-image
+CONTAINER_TAG 	:= ros-$(ROS_DISTRO)-container
+USER_UID 		:= $(shell id -u)
+USER_GID 		:= $(shell id -g)
+
+# Define supported ROS distros
+override SUPPORTED_ROS_DISTROS := melodic noetic
+# Define supported ROS2 distros
+override SUPPORTED_ROS2_DISTROS := foxy humble
 
 # Set Dockerfile path using ROS distro
-ifeq ($(ROS_DISTRO), noetic)
-	DOCKERFILE_PATH := Dockerfile-noetic
-else ifeq ($(ROS_DISTRO), humble)
-	DOCKERFILE_PATH := Dockerfile-humble
+ifneq ($(filter $(ROS_DISTRO),$(SUPPORTED_ROS_DISTROS)),)
+	DOCKERFILE_PATH := Dockerfile.ros
+else ifneq ($(filter $(ROS_DISTRO),$(SUPPORTED_ROS2_DISTROS)),)
+	DOCKERFILE_PATH := Dockerfile.ros2
 else
 	DOCKERFILE_PATH := None
 endif
@@ -20,12 +25,13 @@ endif
 # Build the Docker image
 build:
 	@if [ "$(DOCKERFILE_PATH)" = "None" ]; then \
-		echo "Unsupported/invalid ROS distro: $(ROS_DISTRO). Only noetic and humble are supported"; \
+		echo "Unsupported/invalid ROS distro: $(ROS_DISTRO). Supported ROS distros: $(SUPPORTED_ROS_DISTROS) $(SUPPORTED_ROS2_DISTROS)"; \
 		exit 1; \
 	fi
 	@echo -n "Enter $(USER_NAME) password (optional, press ENTER to continue): "; \
 	/bin/bash -c 'read -s USER_PASSWORD; echo; \
 	docker build \
+		--build-arg ROS_DISTRO=$(ROS_DISTRO) \
         --build-arg USER_NAME=$(USER_NAME) \
 		--build-arg USER_PASSWORD=$$USER_PASSWORD \
 		--build-arg USER_UID=$(USER_UID) \

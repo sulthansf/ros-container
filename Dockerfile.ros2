@@ -1,5 +1,8 @@
-# Use the official ROS noetic desktop image
-FROM osrf/ros:noetic-desktop
+# Set the base image
+ARG ROS_DISTRO=humble
+
+# Use the official ROS desktop image
+FROM osrf/ros:$ROS_DISTRO-desktop
 
 # Arguments
 ARG USER_NAME=user
@@ -24,7 +27,6 @@ RUN groupadd -g $USER_GID $USER_NAME && \
 # Install the required packages
 RUN apt-get update && apt-get install -y \
     python3-pip \
-    python3-catkin-tools \
     nano
 
 # Copy the requirements.txt file
@@ -47,13 +49,13 @@ RUN /bin/bash -c "source /opt/ros/$ROS_DISTRO/setup.bash && \
                   cd /home/$USER_NAME/ros_ws && \
                   rosdep update && \
                   rosdep install --from-paths src --ignore-src -r -y && \
-                  catkin build"
+                  colcon build --symlink-install"
 
 # Set the environment variables
 RUN echo "\n# Set the environment variables" >> ~/.bashrc && \
     echo "export PATH=/home/$USER_NAME/.local/bin:\$PATH" >> ~/.bashrc && \
     echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
-    echo "source /home/$USER_NAME/ros_ws/devel/setup.bash" >> ~/.bashrc
+    echo "source /home/$USER_NAME/ros_ws/install/local_setup.bash" >> ~/.bashrc
 
 # Set the entrypoint
 CMD ["/bin/bash"]
