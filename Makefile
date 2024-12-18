@@ -8,6 +8,9 @@ CONTAINER_TAG 	:= ros-$(ROS_DISTRO)-container
 USER_UID 		:= $(shell id -u)
 USER_GID 		:= $(shell id -g)
 
+# Check if NVIDIA GPU is available
+NVIDIA_GPU		:= $(shell (docker info | grep Runtimes | grep nvidia 1> /dev/null && command -v nvidia-smi 1>/dev/null 2>/dev/null && nvidia-smi | grep Processes 1>/dev/null 2>/dev/null) && echo '--runtime nvidia --gpus all' || echo '')
+
 # Define supported ROS distros
 override SUPPORTED_ROS_DISTROS := melodic noetic
 # Define supported ROS2 distros
@@ -46,6 +49,7 @@ run:
 		--name $(CONTAINER_TAG) \
 		--restart unless-stopped \
 		-e DISPLAY=${DISPLAY} \
+		-e NVIDIA_DRIVER_CAPABILITIES=all ${NVIDIA_GPU} \
 		-v /tmp/.X11-unix/:/tmp/.X11-unix \
 		-v ~/.rviz/:/home/$(USER_NAME)/.rviz \
 		-v ~/.Xauthority:/home/$(USER_NAME)/.Xauthority:ro \
