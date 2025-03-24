@@ -1,28 +1,43 @@
-# ROS and ROS2 Docker containers with Nvidia GPU and CUDA support
-This repository contains Dockerfiles and a Makefile to build a Docker container for developing ROS applications. The supported ROS versions are Noetic and Humble. The container features the following:
-- Mounts ros_ws/src and data directories as volumes
-- Forwards X11 display to the host
-- Supports serial communication
-- Supports video input
-- Allows access to the host's network
+# ROS & ROS2 Docker containers with Nvidia GPU
+This repository provides Dockerfiles and a convenient Makefile to build and manage Docker containers tailored for **ROS (Robot Operating System)** and **ROS2** development with **NVIDIA GPU and CUDA support**.
 
-## Setup
+Supported ROS distributions:
 
+- **ROS:** `melodic`, `noetic`
+- **ROS2:** `foxy`, `humble`
+
+## Features
+- **NVIDIA GPU & CUDA support** via NVIDIA Container Toolkit
+- **X11 GUI forwarding** to host
+- **Serial communication** support
+- **Video input** access
+- **Host networking**
+- **Mounted volumes** for `ros_ws/src` and `data` for persistent development
+
+## Prerequisites
+Make sure you have the following installed on your system:
+- [Docker](https://docs.docker.com/get-docker/)
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+
+## Build the Docker image
+Initially, you need to build the Docker image with the desired ROS distribution.**
 ### Build
-To build the container, run the following command:
+To build the image, run the following command:
 ```bash
 make build ROS_DISTRO=<ros_distro> USER_NAME=<user_name>
 ```
-- `<ros_distro>` is the ROS distro to be used in the container. Supported distros are `melodic`, `noetic`, `foxy`, and `humble`. Default is `noetic`.
-- `<user_name>` is the name of the user to be created in the container. Default is `user`.
+#### Arguments
+- `ROS_DISTRO`: `melodic`, `noetic`, `foxy` or `humble`. Default is `noetic`.
+- `USER_NAME`: Name of the user to be created in the container. Default is `user`.
 
 #### Notes
-- The command will prompt for the password for the user to be created in the container. It is optional and can be left empty.
-- The user will be created with the same user id and group id as the host user. This is to avoid permission issues for X11 display and mounted volumes.
+- The command will prompt for the password for container user. It is optional and can be left empty.
+- UID and GID match the host user to avoid permission issues.
 - The above command will build the image with the tag `ros-<ros_distro>-image`.
 
-**After a Docker image with a specific ROS distro is built, the following commands can be used to manage the image and the container.**
-_Note: The arguments used in the following commands should be the same as the ones used to build the corresponding image._
+## Container Management
+After building the image, you can manage the container using the following commands.  
+_Note: Use the same ROS_DISTRO and USER_NAME as when building the image._
 
 ### Run
 To run the container, run the following command:
@@ -32,7 +47,7 @@ make run ROS_DISTRO=<ros_distro> USER_NAME=<user_name>
 
 #### Notes
 - The above command will create a container with the tag `ros-<ros_distro>-container`.
-- The container will be started and attached to the terminal. The container will not be stopped or removed when the terminal is closed.
+- The container will be started and attached to the terminal and will not be stopped or removed when the terminal is closed.
 
 ### Attach
 To attach to the container, run the following command:
