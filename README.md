@@ -1,4 +1,4 @@
-# ROS Container
+# ROS and ROS2 Docker containers with Nvidia GPU and CUDA support
 This repository contains Dockerfiles and a Makefile to build a Docker container for developing ROS applications. The supported ROS versions are Noetic and Humble. The container features the following:
 - Mounts ros_ws/src and data directories as volumes
 - Forwards X11 display to the host
